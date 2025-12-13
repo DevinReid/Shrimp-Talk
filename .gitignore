@@ -10,6 +10,11 @@ venv/
 ENV/
 .venv
 
+# Next.js
+.next/
+out/
+.vercel
+
 # Build outputs
 dist/
 build/

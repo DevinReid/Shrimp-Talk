@@ -1,0 +1,78 @@
+@import "tailwindcss";
+
+@theme {
+  --color-shrimp-50: #fff5f5;
+  --color-shrimp-100: #ffe8e8;
+  --color-shrimp-200: #ffd4d4;
+  --color-shrimp-300: #ffb3b3;
+  --color-shrimp-400: #ff8585;
+  --color-shrimp-500: #ff6b6b;
+  --color-shrimp-600: #ff5252;
+  --color-shrimp-700: #ff3838;
+  --color-shrimp-800: #ff1f1f;
+  --color-shrimp-900: #e60000;
+  
+  --color-coral-50: #fff5f0;
+  --color-coral-100: #ffe8dc;
+  --color-coral-200: #ffd1b8;
+  --color-coral-300: #ffb38a;
+  --color-coral-400: #ff8c5c;
+  --color-coral-500: #ff6b3d;
+  --color-coral-600: #ff4d1a;
+  --color-coral-700: #e63900;
+  --color-coral-800: #cc3300;
+  --color-coral-900: #b32d00;
+  
+  --color-ocean-50: #f0f9ff;
+  --color-ocean-100: #e0f2fe;
+  --color-ocean-200: #bae6fd;
+  --color-ocean-300: #7dd3fc;
+  --color-ocean-400: #38bdf8;
+  --color-ocean-500: #0ea5e9;
+  --color-ocean-600: #0284c7;
+  --color-ocean-700: #0369a1;
+  --color-ocean-800: #075985;
+  --color-ocean-900: #0c4a6e;
+}
+
+:root {
+  --background: var(--color-background);
+  --foreground: var(--color-foreground);
+  --shrimp-primary: #ff6b6b;
+  --shrimp-secondary: #ff8c5c;
+  --shrimp-accent: #0ea5e9;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #1a0f0f;
+    --foreground: #ffe8e8;
+    --shrimp-primary: #ff8585;
+    --shrimp-secondary: #ffb38a;
+    --shrimp-accent: #38bdf8;
+  }
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .shrimp-gradient {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ff8c5c 50%, #ffb38a 100%);
+  }
+  
+  .shrimp-gradient-text {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ff8c5c 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+

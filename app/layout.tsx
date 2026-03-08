@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Layout from "@/components/shared/Layout";
+import SessionProvider from "@/components/shared/SessionProvider";
+import { fredoka, nunito } from "@/lib/fonts";
 
 export const metadata: Metadata = {
   title: "🦐 Shrimp Talk",
@@ -13,11 +15,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body>
-        <Layout>{children}</Layout>
+    <html lang="en" className={`${fredoka.variable} ${nunito.variable}`}>
+      <body className={nunito.className}>
+        <SessionProvider>
+          <Layout>{children}</Layout>
+        </SessionProvider>
       </body>
     </html>
   );
 }
-

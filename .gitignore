@@ -56,3 +56,7 @@ coverage/
 *.temp
 .cache/
 
+
+/lib/generated/prisma
+*.db
+*.db-journal

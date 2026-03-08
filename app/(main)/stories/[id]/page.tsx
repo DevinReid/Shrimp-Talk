@@ -3,6 +3,7 @@
 import { useParams, useRouter } from "next/navigation";
 import ProtectedRoute from "@/components/shared/ProtectedRoute";
 import StoryViewer from "@/components/feed/StoryViewer";
+import { wonkyColors, wonkyCardRadius } from "@/lib/wonkyTheme";
 import { mockStories } from "@/lib/mockData";
 
 export default function StoryPage() {
@@ -15,9 +16,16 @@ export default function StoryPage() {
   if (!story) {
     return (
       <ProtectedRoute>
-        <div className="max-w-2xl mx-auto">
-          <div className="backdrop-blur-sm p-8 rounded-xl border-2 shadow-lg text-center" style={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', borderColor: '#ffd4d4' }}>
-            <p className="text-xl" style={{ color: '#ff5252' }}>
+        <div className="min-h-screen flex items-center justify-center px-4" style={{ backgroundColor: wonkyColors.coral }}>
+          <div
+            className="p-6 text-center"
+            style={{
+              backgroundColor: "rgba(255,255,255,0.92)",
+              borderRadius: wonkyCardRadius,
+              border: `2.5px solid ${wonkyColors.black}`,
+            }}
+          >
+            <p className="text-lg font-bold" style={{ color: wonkyColors.pink }}>
               Story not found 🦐
             </p>
           </div>
@@ -35,4 +43,3 @@ export default function StoryPage() {
     </ProtectedRoute>
   );
 }
-

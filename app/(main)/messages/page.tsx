@@ -1,40 +1,73 @@
 "use client";
 
-import { useState } from "react";
-import ProtectedRoute from "@/components/shared/ProtectedRoute";
+import { useState, useCallback } from "react";
+import MobileTopBar from "@/components/app/MobileTopBar";
+import BottomNav from "@/components/app/BottomNav";
 import ConversationList from "@/components/messages/ConversationList";
 import ChatWindow from "@/components/messages/ChatWindow";
-import { mockConversations } from "@/lib/mockData";
+import { wonkyColors } from "@/lib/wonkyTheme";
+import { mockConversations as initialConversations } from "@/lib/mockData";
 import type { Conversation } from "@/types";
 
 export default function MessagesPage() {
+  const [conversations, setConversations] = useState<Conversation[]>(initialConversations);
   const [selectedConversationId, setSelectedConversationId] = useState<string | undefined>();
-  const selectedConversation = mockConversations.find(
+
+  const selectedConversation = conversations.find(
     (c) => c.id === selectedConversationId
   );
 
-  return (
-    <ProtectedRoute>
-      <div className="h-[calc(100vh-12rem)] max-w-7xl mx-auto">
-        <div className="h-full backdrop-blur-sm rounded-xl border-2 shadow-lg overflow-hidden" style={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', borderColor: '#ffd4d4' }}>
-          <div className="flex h-full">
-            {/* Conversations List - Left Sidebar */}
-            <div className="w-80 border-r-2 flex-shrink-0" style={{ borderColor: '#ffd4d4' }}>
-              <ConversationList
-                conversations={mockConversations}
-                selectedConversationId={selectedConversationId}
-                onSelectConversation={setSelectedConversationId}
-              />
-            </div>
+  const handleTogglePin = useCallback((conversationId: string) => {
+    setConversations((prev) =>
+      prev.map((c) =>
+        c.id === conversationId ? { ...c, isPinned: !c.isPinned } : c
+      )
+    );
+  }, []);
 
-            {/* Chat Window - Right Side */}
-            <div className="flex-1 min-w-0">
-              <ChatWindow conversation={selectedConversation || null} />
-            </div>
+  const handleSelectConversation = useCallback((conversationId: string) => {
+    setSelectedConversationId(conversationId);
+    setConversations((prev) =>
+      prev.map((c) =>
+        c.id === conversationId ? { ...c, unreadCount: 0 } : c
+      )
+    );
+  }, []);
+
+  const handleBack = useCallback(() => {
+    setSelectedConversationId(undefined);
+  }, []);
+
+  return (
+    <div
+      className="min-h-screen relative"
+      style={{ backgroundColor: wonkyColors.coral }}
+    >
+      {!selectedConversation ? (
+        <>
+          <MobileTopBar />
+          <div className="px-3 pt-2 pb-24">
+            <h2
+              className="text-xl font-bold mb-3 px-1"
+              style={{ color: wonkyColors.white, fontFamily: "var(--font-fredoka), sans-serif" }}
+            >
+              messages
+            </h2>
+            <ConversationList
+              conversations={conversations}
+              selectedConversationId={selectedConversationId}
+              onSelectConversation={handleSelectConversation}
+              onTogglePin={handleTogglePin}
+            />
           </div>
-        </div>
-      </div>
-    </ProtectedRoute>
+          <BottomNav />
+        </>
+      ) : (
+        <ChatWindow
+          conversation={selectedConversation}
+          onBack={handleBack}
+        />
+      )}
+    </div>
   );
 }
-

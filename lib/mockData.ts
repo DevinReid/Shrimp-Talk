@@ -147,11 +147,14 @@ export const mockConversations: Conversation[] = [
       type: "text",
       createdAt: new Date("2024-01-10T13:00:00"),
     },
+    unreadCount: 2,
+    isPinned: true,
     createdAt: new Date("2024-01-09"),
   },
   {
     id: "conv2",
     type: "group",
+    groupName: "Weekend Squad",
     participants: [mockUsers[0], mockUsers[1], mockUsers[2], mockUsers[3]],
     lastMessage: {
       id: "msg2",
@@ -162,7 +165,79 @@ export const mockConversations: Conversation[] = [
       type: "text",
       createdAt: new Date("2024-01-10T14:00:00"),
     },
+    unreadCount: 5,
+    isPinned: false,
     createdAt: new Date("2024-01-08"),
+  },
+  {
+    id: "conv3",
+    type: "dm",
+    participants: [mockUsers[0], mockUsers[2]],
+    lastMessage: {
+      id: "msg5",
+      conversationId: "conv3",
+      senderId: "3",
+      sender: mockUsers[2],
+      content: "Check out this new hiking trail!",
+      type: "text",
+      createdAt: new Date("2024-01-10T11:30:00"),
+    },
+    unreadCount: 0,
+    isPinned: false,
+    createdAt: new Date("2024-01-07"),
+  },
+  {
+    id: "conv4",
+    type: "dm",
+    participants: [mockUsers[0], mockUsers[3]],
+    lastMessage: {
+      id: "msg6",
+      conversationId: "conv4",
+      senderId: "4",
+      sender: mockUsers[3],
+      content: "Loved your latest photo!",
+      type: "text",
+      createdAt: new Date("2024-01-10T09:15:00"),
+    },
+    unreadCount: 1,
+    isPinned: false,
+    createdAt: new Date("2024-01-06"),
+  },
+  {
+    id: "conv5",
+    type: "group",
+    groupName: "Movie Night",
+    participants: [mockUsers[0], mockUsers[2], mockUsers[3]],
+    lastMessage: {
+      id: "msg7",
+      conversationId: "conv5",
+      senderId: "4",
+      sender: mockUsers[3],
+      content: "What are we watching Friday?",
+      type: "text",
+      createdAt: new Date("2024-01-10T16:45:00"),
+    },
+    unreadCount: 3,
+    isPinned: true,
+    createdAt: new Date("2024-01-05"),
+  },
+  {
+    id: "conv6",
+    type: "group",
+    groupName: "Study Group",
+    participants: [mockUsers[0], mockUsers[1], mockUsers[2]],
+    lastMessage: {
+      id: "msg8",
+      conversationId: "conv6",
+      senderId: "2",
+      sender: mockUsers[1],
+      content: "Chapter 5 notes are up",
+      type: "text",
+      createdAt: new Date("2024-01-09T20:00:00"),
+    },
+    unreadCount: 0,
+    isPinned: false,
+    createdAt: new Date("2024-01-04"),
   },
 ];
 
@@ -208,6 +283,59 @@ export const mockMessages: Record<string, Message[]> = {
       createdAt: new Date("2024-01-10T14:02:00"),
     },
   ],
+  conv3: [
+    {
+      id: "msg5",
+      conversationId: "conv3",
+      senderId: "3",
+      sender: mockUsers[2],
+      content: "Check out this new hiking trail!",
+      type: "text",
+      createdAt: new Date("2024-01-10T11:30:00"),
+    },
+  ],
+  conv4: [
+    {
+      id: "msg6",
+      conversationId: "conv4",
+      senderId: "4",
+      sender: mockUsers[3],
+      content: "Loved your latest photo!",
+      type: "text",
+      createdAt: new Date("2024-01-10T09:15:00"),
+    },
+  ],
+  conv5: [
+    {
+      id: "msg7",
+      conversationId: "conv5",
+      senderId: "4",
+      sender: mockUsers[3],
+      content: "What are we watching Friday?",
+      type: "text",
+      createdAt: new Date("2024-01-10T16:45:00"),
+    },
+    {
+      id: "msg8",
+      conversationId: "conv5",
+      senderId: "3",
+      sender: mockUsers[2],
+      content: "How about that new sci-fi movie?",
+      type: "text",
+      createdAt: new Date("2024-01-10T16:50:00"),
+    },
+  ],
+  conv6: [
+    {
+      id: "msg9",
+      conversationId: "conv6",
+      senderId: "2",
+      sender: mockUsers[1],
+      content: "Chapter 5 notes are up",
+      type: "text",
+      createdAt: new Date("2024-01-09T20:00:00"),
+    },
+  ],
 };
 
 // Mock rooms
@@ -234,4 +362,5 @@ export const mockRooms: Room[] = [
 
 // Current user (for mock purposes)
 export const currentUser: User = mockUsers[0];
+
 

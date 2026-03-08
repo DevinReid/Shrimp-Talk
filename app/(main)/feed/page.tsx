@@ -1,143 +1,137 @@
 "use client";
 
-import { useState } from "react";
-import ProtectedRoute from "@/components/shared/ProtectedRoute";
-import FeedToggle from "@/components/feed/FeedToggle";
-import StoryCircle from "@/components/feed/StoryCircle";
-import StoryViewer from "@/components/feed/StoryViewer";
-import PostCard from "@/components/feed/PostCard";
-import CreatePostModal from "@/components/feed/CreatePostModal";
-import { mockPosts, mockStories, currentUser } from "@/lib/mockData";
-import type { Post, Story } from "@/types";
+import MobileTopBar from "@/components/app/MobileTopBar";
+import BottomNav from "@/components/app/BottomNav";
+import MobilePostCard from "@/components/app/MobilePostCard";
+import { wonkyColors } from "@/lib/wonkyTheme";
+import { mockUsers } from "@/lib/mockData";
+import type { Post } from "@/types";
+
+const feedPosts: Post[] = [
+  {
+    id: "fp1",
+    userId: "2",
+    user: mockUsers[1],
+    type: "photo",
+    imageUrl: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&h=800&fit=crop",
+    caption: "Morning hike was absolutely worth the early alarm",
+    likes: 0,
+    likedByUser: false,
+    comments: [
+      { id: "c1", postId: "fp1", userId: "3", user: mockUsers[2], content: "Where is this?? I need to go", createdAt: new Date(Date.now() - 1 * 60 * 60 * 1000) },
+    ],
+    visibleToGroups: ["group1"],
+    createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000),
+  },
+  {
+    id: "fp2",
+    userId: "3",
+    user: mockUsers[2],
+    type: "text",
+    caption: "Hosting a costume party at my place this Saturday! Theme is 80s movies. DM me for the address if you don't have it. Starts at 7, BYOB.",
+    likes: 0,
+    likedByUser: false,
+    comments: [],
+    visibleToGroups: ["group1"],
+    createdAt: new Date(Date.now() - 3 * 60 * 60 * 1000),
+  },
+  {
+    id: "fp3",
+    userId: "4",
+    user: mockUsers[3],
+    type: "photo",
+    imageUrl: "https://images.unsplash.com/photo-1551218808-94e220e084d2?w=800&h=800&fit=crop",
+    caption: "New studio setup is finally coming together",
+    likes: 0,
+    likedByUser: false,
+    comments: [],
+    visibleToGroups: ["group2"],
+    createdAt: new Date(Date.now() - 5 * 60 * 60 * 1000),
+  },
+  {
+    id: "fp4",
+    userId: "2",
+    user: mockUsers[1],
+    type: "text",
+    caption: "Does anyone have a good recipe for sourdough? I've killed my last three starters and I'm starting to take it personally.",
+    likes: 0,
+    likedByUser: false,
+    comments: [
+      { id: "c2", postId: "fp4", userId: "4", user: mockUsers[3], content: "Literally same. Mine lasted 2 days.", createdAt: new Date(Date.now() - 6 * 60 * 60 * 1000) },
+      { id: "c3", postId: "fp4", userId: "3", user: mockUsers[2], content: "I'll send you the one that finally worked for me", createdAt: new Date(Date.now() - 5.5 * 60 * 60 * 1000) },
+    ],
+    visibleToGroups: ["group1"],
+    createdAt: new Date(Date.now() - 7 * 60 * 60 * 1000),
+  },
+  {
+    id: "fp5",
+    userId: "3",
+    user: mockUsers[2],
+    type: "photo",
+    imageUrl: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&h=800&fit=crop",
+    caption: "Sunday brunch situation",
+    likes: 0,
+    likedByUser: false,
+    comments: [],
+    visibleToGroups: ["group1", "group3"],
+    createdAt: new Date(Date.now() - 10 * 60 * 60 * 1000),
+  },
+  {
+    id: "fp6",
+    userId: "4",
+    user: mockUsers[3],
+    type: "text",
+    caption: "Reminder: Book club is moved to Wednesday this week because of the holiday. Same time, same place. We're finishing the last 3 chapters.",
+    likes: 0,
+    likedByUser: false,
+    comments: [],
+    visibleToGroups: ["group2"],
+    createdAt: new Date(Date.now() - 12 * 60 * 60 * 1000),
+  },
+  {
+    id: "fp7",
+    userId: "2",
+    user: mockUsers[1],
+    type: "photo",
+    imageUrl: "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&h=800&fit=crop",
+    caption: "Couldn't believe this was real life",
+    likes: 0,
+    likedByUser: false,
+    comments: [
+      { id: "c4", postId: "fp7", userId: "4", user: mockUsers[3], content: "This looks like a painting", createdAt: new Date(Date.now() - 20 * 60 * 60 * 1000) },
+    ],
+    visibleToGroups: ["group1"],
+    createdAt: new Date(Date.now() - 22 * 60 * 60 * 1000),
+  },
+  {
+    id: "fp8",
+    userId: "3",
+    user: mockUsers[2],
+    type: "text",
+    caption: "Lost my keys somewhere between the coffee shop on Main and the parking garage. Silver keychain with a little cactus on it. Let me know if you spot them!",
+    likes: 0,
+    likedByUser: false,
+    comments: [],
+    visibleToGroups: ["group1", "group3"],
+    createdAt: new Date(Date.now() - 25 * 60 * 60 * 1000),
+  },
+];
 
 export default function FeedPage() {
-  const [feedEnabled, setFeedEnabled] = useState(true);
-  const [selectedStory, setSelectedStory] = useState<Story | null>(null);
-  const [isCreatePostOpen, setIsCreatePostOpen] = useState(false);
-  const [posts, setPosts] = useState<Post[]>(mockPosts);
-
-  const handleCreatePost = (data: { imageUrl: string; caption: string; visibleToGroups: string[] }) => {
-    // Create new post (mock)
-    const newPost: Post = {
-      id: `post-${Date.now()}`,
-      userId: currentUser.id,
-      user: currentUser,
-      imageUrl: data.imageUrl,
-      caption: data.caption,
-      likes: 0,
-      likedByUser: false,
-      comments: [],
-      visibleToGroups: data.visibleToGroups,
-      createdAt: new Date(),
-    };
-    setPosts([newPost, ...posts]);
-  };
-
-  // Filter stories that haven't expired
-  const activeStories = mockStories.filter(
-    (story) => new Date(story.expiresAt) > new Date()
-  );
-
-  // If feed is disabled, show message
-  if (!feedEnabled) {
-    return (
-      <ProtectedRoute>
-        <div className="max-w-2xl mx-auto">
-          <FeedToggle isEnabled={feedEnabled} onToggle={setFeedEnabled} />
-          <div className="backdrop-blur-sm p-12 rounded-xl border-2 shadow-lg text-center" style={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', borderColor: '#ffd4d4' }}>
-            <div className="text-6xl mb-4">🦐</div>
-            <h2 className="text-3xl font-bold mb-4 shrimp-gradient-text">
-              Feed is Hidden
-            </h2>
-            <p className="text-lg mb-6" style={{ color: '#ff6b6b' }}>
-              Your feed is currently turned off. This helps you focus on intentional engagement.
-            </p>
-            <p className="text-sm" style={{ color: '#ff6b6b' }}>
-              Turn it back on when you're ready to see posts from your friends.
-            </p>
-          </div>
-        </div>
-      </ProtectedRoute>
-    );
-  }
-
   return (
-    <ProtectedRoute>
-      <div className="max-w-2xl mx-auto">
-        <FeedToggle isEnabled={feedEnabled} onToggle={setFeedEnabled} />
+    <div
+      className="min-h-screen relative"
+      style={{ backgroundColor: wonkyColors.coral }}
+    >
+      <MobileTopBar />
 
-        {/* Stories Section */}
-        {activeStories.length > 0 && (
-          <div className="backdrop-blur-sm p-4 rounded-xl border-2 shadow-lg mb-6 overflow-x-auto" style={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', borderColor: '#ffd4d4' }}>
-            <div className="flex gap-4">
-              {/* Create Story Button */}
-              <div className="flex flex-col items-center gap-2">
-                <button
-                  onClick={() => {/* TODO: Open create story modal */}}
-                  className="w-16 h-16 rounded-full border-4 flex items-center justify-center text-2xl hover:scale-110 transition-transform"
-                  style={{ borderColor: '#ff6b6b', backgroundColor: '#ffe8e8' }}
-                >
-                  ➕
-                </button>
-                <p className="text-xs text-center max-w-[64px] truncate" style={{ color: '#ff5252' }}>
-                  Your story
-                </p>
-              </div>
-              {activeStories.map((story) => (
-                <StoryCircle 
-                  key={story.id} 
-                  story={story}
-                  onClick={() => setSelectedStory(story)}
-                />
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Create Post Button */}
-        <div className="mb-6">
-          <button
-            onClick={() => setIsCreatePostOpen(true)}
-            className="w-full shrimp-gradient hover:opacity-90 text-white px-6 py-4 rounded-xl font-semibold text-lg transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
-          >
-            <span>➕</span>
-            <span>Create Post 🦐</span>
-          </button>
-        </div>
-
-        {/* Posts Feed */}
-        <div>
-          {posts.length === 0 ? (
-            <div className="backdrop-blur-sm p-12 rounded-xl border-2 shadow-lg text-center" style={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', borderColor: '#ffd4d4' }}>
-            <div className="text-6xl mb-4">🦐</div>
-            <p className="text-xl mb-2" style={{ color: '#ff5252' }}>
-              No posts yet
-            </p>
-            <p style={{ color: '#ff6b6b' }}>
-              Be the first to share something!
-            </p>
-          </div>
-          ) : (
-            posts.map((post) => <PostCard key={post.id} post={post} />)
-          )}
-        </div>
-
-        {/* Story Viewer Modal */}
-        {selectedStory && (
-          <StoryViewer
-            story={selectedStory}
-            onClose={() => setSelectedStory(null)}
-          />
-        )}
-
-        {/* Create Post Modal */}
-        <CreatePostModal
-          isOpen={isCreatePostOpen}
-          onClose={() => setIsCreatePostOpen(false)}
-          onSubmit={handleCreatePost}
-        />
+      <div className="pb-24 pt-2 px-3 space-y-4">
+        {feedPosts.map((post) => (
+          <MobilePostCard key={post.id} post={post} />
+        ))}
       </div>
-    </ProtectedRoute>
+
+      <BottomNav />
+    </div>
   );
 }
-

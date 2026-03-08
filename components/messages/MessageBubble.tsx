@@ -13,40 +13,47 @@ export default function MessageBubble({ message }: MessageBubbleProps) {
 
   return (
     <div
-      className={`flex gap-2 mb-4 ${isOwn ? "flex-row-reverse" : "flex-row"}`}
+      className={`flex gap-2 mb-3 ${isOwn ? "flex-row-reverse" : "flex-row"}`}
     >
       {!isOwn && (
-        <div className="flex-shrink-0">
+        <div className="flex-shrink-0 mt-auto">
           {message.sender.avatarUrl ? (
             <img
               src={message.sender.avatarUrl}
               alt={message.sender.displayName}
-              className="w-8 h-8 rounded-full border-2"
-              style={{ borderColor: '#ffb3b3' }}
+              className="w-7 h-7 rounded-full"
+              style={{ border: "1.5px solid #e8c4c0" }}
             />
           ) : (
             <div
-              className="w-8 h-8 rounded-full border-2 flex items-center justify-center"
-              style={{ borderColor: '#ffb3b3', backgroundColor: '#ffe8e8' }}
+              className="w-7 h-7 rounded-full flex items-center justify-center text-xs"
+              style={{ backgroundColor: "#f5e6e6", border: "1.5px solid #e8c4c0" }}
             >
               🦐
             </div>
           )}
         </div>
       )}
-      <div className={`flex flex-col max-w-[70%] ${isOwn ? "items-end" : "items-start"}`}>
+      <div
+        className={`flex flex-col max-w-[75%] ${isOwn ? "items-end" : "items-start"}`}
+      >
         {!isOwn && (
-          <span className="text-xs mb-1 px-2" style={{ color: '#ff6b6b' }}>
+          <span
+            className="text-[11px] mb-0.5 px-1"
+            style={{ color: "#b0a0a0" }}
+          >
             {message.sender.displayName}
           </span>
         )}
         <div
-          className={`px-4 py-2 rounded-2xl ${
-            isOwn ? "rounded-tr-sm" : "rounded-tl-sm"
+          className={`px-3.5 py-2 text-[15px] leading-snug ${
+            isOwn
+              ? "rounded-2xl rounded-br-md"
+              : "rounded-2xl rounded-bl-md"
           }`}
           style={{
-            backgroundColor: isOwn ? '#ff6b6b' : '#ffe8e8',
-            color: isOwn ? 'white' : '#2d1b1b',
+            backgroundColor: isOwn ? "#c2403a" : "#f0e0e0",
+            color: isOwn ? "white" : "#2d1b1b",
           }}
         >
           {message.type === "image" ? (
@@ -64,7 +71,10 @@ export default function MessageBubble({ message }: MessageBubbleProps) {
             <p className="whitespace-pre-wrap break-words">{message.content}</p>
           )}
         </div>
-        <span className="text-xs mt-1 px-2" style={{ color: '#ff6b6b' }}>
+        <span
+          className="text-[10px] mt-0.5 px-1"
+          style={{ color: "#b0a0a0" }}
+        >
           {new Date(message.createdAt).toLocaleTimeString([], {
             hour: "2-digit",
             minute: "2-digit",
@@ -74,4 +84,3 @@ export default function MessageBubble({ message }: MessageBubbleProps) {
     </div>
   );
 }
-

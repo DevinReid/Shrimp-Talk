@@ -18,16 +18,39 @@ export interface FriendGroup {
 }
 
 // Post types
+export type PostType = "photo" | "video" | "text" | "checkin";
+
+export type PostDuration = "forever" | "1h" | "6h" | "24h" | "3d" | "1w";
+
 export interface Post {
   id: string;
   userId: string;
   user: User;
-  imageUrl: string;
+  type?: PostType;
+  imageUrl?: string;
+  videoUrl?: string;
   caption?: string;
+  locationName?: string;
   likes: number;
   likedByUser: boolean;
   comments: Comment[];
-  visibleToGroups: string[]; // Group IDs
+  visibleToGroups: string[];
+  expiresAt?: Date;
+  createdAt: Date;
+}
+
+// Calendar Event types
+export interface CalendarEvent {
+  id: string;
+  userId: string;
+  user: User;
+  title: string;
+  description?: string;
+  date: Date;
+  endDate?: Date;
+  location?: string;
+  attendees: User[];
+  visibleToGroups: string[];
   createdAt: Date;
 }
 
@@ -65,8 +88,11 @@ export interface Message {
 export interface Conversation {
   id: string;
   type: "dm" | "group";
+  groupName?: string;
   participants: User[];
   lastMessage?: Message;
+  unreadCount: number;
+  isPinned: boolean;
   createdAt: Date;
 }
 

@@ -1,185 +1,214 @@
 "use client";
 
 import { useState } from "react";
-import { useAuthStore } from "@/stores/useAuthStore";
-import { useRouter } from "next/navigation";
+import BottomNav from "@/components/app/BottomNav";
+import { wonkyColors, wonkyCardRadius } from "@/lib/wonkyTheme";
+
+const TAGS = ["shrimp", "photography", "hiking", "cooking", "indie music", "travel", "coffee", "board games"];
+const VISIBLE_TAGS = 5;
+
+const PROFILE_POSTS = [
+  { id: "pp1", imageUrl: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&h=800&fit=crop", caption: "Morning hike was absolutely worth the early alarm", time: "2h ago" },
+  { id: "pp2", imageUrl: null, caption: "Does anyone have a good recipe for sourdough? I've killed my last three starters and I'm starting to take it personally.", time: "7h ago" },
+  { id: "pp3", imageUrl: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&h=800&fit=crop", caption: "Sunday brunch situation", time: "1d ago" },
+  { id: "pp4", imageUrl: null, caption: "Reminder: Book club is moved to Wednesday this week because of the holiday. Same time, same place.", time: "2d ago" },
+  { id: "pp5", imageUrl: "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&h=800&fit=crop", caption: "Couldn't believe this was real life", time: "3d ago" },
+];
 
 export default function ProfilePage() {
-  const { user, setUser, logout } = useAuthStore();
-  const router = useRouter();
-  const [isEditing, setIsEditing] = useState(false);
-  const [displayName, setDisplayName] = useState(user?.displayName || "");
-  const [bio, setBio] = useState(user?.bio || "");
-  const [avatarUrl, setAvatarUrl] = useState(user?.avatarUrl || "");
-  const [isSaving, setIsSaving] = useState(false);
-
-  if (!user) {
-    router.push("/login");
-    return null;
-  }
-
-  const handleSave = async () => {
-    setIsSaving(true);
-    // Mock save - in real app, this would call API
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    
-    setUser({
-      ...user,
-      displayName,
-      bio,
-      avatarUrl,
-    });
-    
-    setIsEditing(false);
-    setIsSaving(false);
-  };
-
-  const handleCancel = () => {
-    setDisplayName(user.displayName);
-    setBio(user.bio || "");
-    setAvatarUrl(user.avatarUrl || "");
-    setIsEditing(false);
-  };
+  const [showAllTags, setShowAllTags] = useState(false);
+  const displayedTags = showAllTags ? TAGS : TAGS.slice(0, VISIBLE_TAGS);
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold mb-2 shrimp-gradient-text">
-          Your Profile 🦐
-        </h1>
-      </div>
-
-      <div className="backdrop-blur-sm p-8 rounded-xl border-2 shadow-lg" style={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', borderColor: '#ffd4d4' }}>
-        <div className="flex flex-col items-center mb-6">
-          {avatarUrl ? (
-            <img
-              src={avatarUrl}
-              alt={displayName}
-              className="w-32 h-32 rounded-full border-4 mb-4"
-              style={{ borderColor: '#ffb3b3' }}
-            />
-          ) : (
-            <div
-              className="w-32 h-32 rounded-full border-4 mb-4 flex items-center justify-center text-4xl"
-              style={{ borderColor: '#ffb3b3', backgroundColor: '#ffe8e8' }}
-            >
-              🦐
+    <div
+      className="min-h-screen relative"
+      style={{ backgroundColor: wonkyColors.coral }}
+    >
+      <div className="sticky top-0 z-40">
+        <div className="px-4 safe-area-top" style={{ backgroundColor: "#ffffff" }}>
+          <div className="flex items-center justify-between h-14">
+            <button className="p-1" style={{ color: wonkyColors.coral }}><BackIcon /></button>
+            <h1 className="text-xl" style={{ fontFamily: "var(--font-fredoka), sans-serif", fontWeight: 700, color: wonkyColors.coral }}>
+              profile
+            </h1>
+            <div className="flex items-center gap-2">
+              <button className="p-1" style={{ color: wonkyColors.coral }}><ShareIcon /></button>
+              <button className="p-1" style={{ color: wonkyColors.coral }}><MenuIcon /></button>
             </div>
-          )}
-          
-          {isEditing && (
-            <input
-              type="text"
-              value={avatarUrl}
-              onChange={(e) => setAvatarUrl(e.target.value)}
-              placeholder="Avatar URL"
-              className="w-full max-w-xs px-4 py-2 rounded-lg border-2 mb-2 focus:outline-none focus:ring-2 transition-all"
-              style={{ 
-                borderColor: '#ffd4d4',
-                backgroundColor: 'white',
-                color: '#2d1b1b'
-              }}
-            />
-          )}
+          </div>
         </div>
 
-        <div className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium mb-2" style={{ color: '#ff5252' }}>
-              Display Name
-            </label>
-            {isEditing ? (
-              <input
-                type="text"
-                value={displayName}
-                onChange={(e) => setDisplayName(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 transition-all"
-                style={{ 
-                  borderColor: '#ffd4d4',
-                  backgroundColor: 'white',
-                  color: '#2d1b1b'
-                }}
-              />
-            ) : (
-              <p className="text-lg font-semibold" style={{ color: '#ff5252' }}>
-                {user.displayName}
-              </p>
-            )}
-          </div>
+        <svg width="100%" height="20" viewBox="0 0 430 20" preserveAspectRatio="none" className="relative z-40 -mt-[1px]">
+          <path d="M0 0 L0 10 C30 20, 60 0, 90 10 C120 20, 150 0, 180 10 C210 20, 240 0, 270 10 C300 20, 330 0, 360 10 C390 20, 420 0, 430 10 L430 0 Z" fill="#ffffff" />
+          <path d="M0 10 C30 20, 60 0, 90 10 C120 20, 150 0, 180 10 C210 20, 240 0, 270 10 C300 20, 330 0, 360 10 C390 20, 420 0, 430 10" fill="none" stroke={wonkyColors.coral} strokeWidth="2.5" />
+        </svg>
+      </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-2" style={{ color: '#ff5252' }}>
-              Email
-            </label>
-            <p className="text-lg" style={{ color: '#ff6b6b' }}>
-              {user.email}
-            </p>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-2" style={{ color: '#ff5252' }}>
-              Bio
-            </label>
-            {isEditing ? (
-              <textarea
-                value={bio}
-                onChange={(e) => setBio(e.target.value)}
-                rows={4}
-                className="w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 transition-all resize-none"
-                style={{ 
-                  borderColor: '#ffd4d4',
-                  backgroundColor: 'white',
-                  color: '#2d1b1b'
-                }}
-                placeholder="Tell us about yourself..."
-              />
-            ) : (
-              <p className="text-lg" style={{ color: '#ff6b6b' }}>
-                {user.bio || "No bio yet"}
-              </p>
-            )}
-          </div>
-
-          <div className="flex gap-4 pt-4">
-            {isEditing ? (
-              <>
-                <button
-                  onClick={handleSave}
-                  disabled={isSaving}
-                  className="flex-1 shrimp-gradient hover:opacity-90 text-white px-6 py-3 rounded-lg font-semibold transition-all shadow-lg hover:shadow-xl disabled:opacity-50"
-                >
-                  {isSaving ? "Saving..." : "Save Changes 🦐"}
-                </button>
-                <button
-                  onClick={handleCancel}
-                  className="flex-1 border-2 px-6 py-3 rounded-lg font-semibold transition-all hover:opacity-80"
-                  style={{ borderColor: '#ffb3b3', color: '#ff6b6b' }}
-                >
-                  Cancel
-                </button>
-              </>
-            ) : (
-              <button
-                onClick={() => setIsEditing(true)}
-                className="flex-1 shrimp-gradient hover:opacity-90 text-white px-6 py-3 rounded-lg font-semibold transition-all shadow-lg hover:shadow-xl"
-              >
-                Edit Profile 🦐
-              </button>
-            )}
-            <button
-              onClick={() => {
-                logout();
-                router.push("/login");
-              }}
-              className="px-6 py-3 rounded-lg font-semibold transition-all hover:opacity-80"
-              style={{ backgroundColor: '#ffe8e8', color: '#ff5252' }}
+      <div className="px-4 pb-24">
+        <div className="mb-4 pt-2">
+          <div className="flex items-center gap-2">
+            <h1
+              className="text-2xl font-bold"
+              style={{ color: wonkyColors.white, fontFamily: "var(--font-fredoka), sans-serif" }}
             >
-              Logout
+              shrimp_alice
+            </h1>
+            <button
+              className="w-7 h-7 flex items-center justify-center"
+              style={{
+                backgroundColor: wonkyColors.gold,
+                borderRadius: "10px 12px 10px 12px",
+                border: `2px solid ${wonkyColors.black}`,
+              }}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={wonkyColors.black} strokeWidth={2.5} strokeLinecap="round">
+                <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
             </button>
           </div>
         </div>
+
+        <div className="flex items-start gap-4 mb-4">
+          <div className="shrink-0">
+            <div
+              className="w-20 h-20 overflow-hidden"
+              style={{
+                borderRadius: "24px 30px 24px 30px",
+                border: `2.5px solid ${wonkyColors.black}`,
+              }}
+            >
+              <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Sunshine" alt="Alice" className="w-full h-full object-cover" />
+            </div>
+            <p className="text-xs text-white/70 mt-1.5 flex items-center gap-1 font-medium">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" fill="white" stroke="none" /></svg>
+              new orleans
+            </p>
+            <p className="text-xs text-white/70 mt-1 flex items-center gap-1 font-medium">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
+              Anna's
+            </p>
+          </div>
+
+          <div
+            className="flex-1 px-4 py-3 relative"
+            style={{
+              backgroundColor: "rgba(255,255,255,0.92)",
+              borderRadius: wonkyCardRadius,
+              border: `2.5px solid ${wonkyColors.black}`,
+            }}
+          >
+            <button className="absolute top-3 right-3" style={{ color: "#9a7a72" }}><EditSmallIcon /></button>
+            <p className="text-sm font-medium" style={{ color: wonkyColors.black }}><span style={{ color: "#9a7a72" }}>name</span> Alice <span style={{ color: "#9a7a72" }}>(she/her)</span></p>
+            <p className="text-sm font-medium" style={{ color: wonkyColors.black }}><span style={{ color: "#9a7a72" }}>vibe</span> chaotic good</p>
+            <p className="text-sm font-medium" style={{ color: wonkyColors.black }}><span style={{ color: "#9a7a72" }}>into</span> sunsets & seafood</p>
+          </div>
+        </div>
+
+        <div
+          className="px-4 py-4 relative"
+          style={{
+            backgroundColor: "rgba(255,255,255,0.92)",
+            borderRadius: wonkyCardRadius,
+            border: `2.5px solid ${wonkyColors.black}`,
+          }}
+        >
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-sm font-bold" style={{ color: "#9a7a72" }}>about me</p>
+            <button style={{ color: "#9a7a72" }}><EditSmallIcon /></button>
+          </div>
+          <p className="text-sm leading-relaxed font-medium" style={{ color: wonkyColors.black }}>
+            just a shrimp trying to make it in this big ocean. i post food pics and bad jokes. no refunds.
+          </p>
+        </div>
+
+        <div
+          className="px-4 py-4 mt-4"
+          style={{
+            backgroundColor: "rgba(255,255,255,0.92)",
+            borderRadius: wonkyCardRadius,
+            border: `2.5px solid ${wonkyColors.black}`,
+          }}
+        >
+          <div className="flex items-center gap-3 py-3">
+            <p className="text-sm w-16 shrink-0 font-bold" style={{ color: "#9a7a72" }}>listening</p>
+            <div className="w-10 h-10 overflow-hidden bg-white/10 shrink-0" style={{ borderRadius: "10px 14px 10px 14px", border: `2px solid ${wonkyColors.black}` }}>
+              <img src="https://picsum.photos/80/80?random=10" alt="Album" className="w-full h-full object-cover" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-bold truncate" style={{ color: wonkyColors.black }}>ocean eyes</p>
+              <p className="text-xs truncate" style={{ color: "#9a7a72" }}>billie eilish</p>
+            </div>
+            <span className="text-xs font-bold px-2.5 py-1" style={{ backgroundColor: wonkyColors.goldSoft, color: "#B8903A", borderRadius: "10px 12px 10px 12px" }}>Spotify</span>
+          </div>
+
+          <div className="flex items-center gap-3 py-3" style={{ borderTop: `2px solid ${wonkyColors.black}20` }}>
+            <p className="text-sm w-16 shrink-0 font-bold" style={{ color: "#9a7a72" }}>watching</p>
+            <div className="w-10 h-10 overflow-hidden bg-white/10 shrink-0" style={{ borderRadius: "10px 14px 10px 14px", border: `2px solid ${wonkyColors.black}` }}>
+              <img src="https://picsum.photos/80/80?random=11" alt="Show" className="w-full h-full object-cover" />
+            </div>
+            <p className="text-sm font-bold" style={{ color: wonkyColors.black }}>the bear</p>
+          </div>
+
+          <div className="flex items-center gap-3 py-3" style={{ borderTop: `2px solid ${wonkyColors.black}20` }}>
+            <p className="text-sm w-16 shrink-0 font-bold" style={{ color: "#9a7a72" }}>playing</p>
+            <p className="text-sm font-bold" style={{ color: wonkyColors.black }}>stardew valley</p>
+          </div>
+        </div>
+
+        <div className="mt-6">
+          <p className="text-sm font-bold mb-3 px-1" style={{ color: wonkyColors.goldSoft, fontFamily: "var(--font-fredoka), sans-serif" }}>pinned</p>
+          <div className="grid grid-cols-3 gap-2">
+            {[30, 31, 32].map((i) => (
+              <div key={i} className="aspect-square overflow-hidden" style={{ borderRadius: "18px 22px 18px 22px", border: `2.5px solid ${wonkyColors.black}` }}>
+                <img src={`https://picsum.photos/300/300?random=${i}`} alt={`Pinned ${i}`} className="w-full h-full object-cover" loading="lazy" />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-6">
+          <p className="text-sm font-bold mb-3 px-1" style={{ color: wonkyColors.goldSoft, fontFamily: "var(--font-fredoka), sans-serif" }}>posts</p>
+          <div className="space-y-4">
+            {PROFILE_POSTS.map((post) =>
+              post.imageUrl ? (
+                <div key={post.id} className="overflow-hidden"
+                  style={{ backgroundColor: "rgba(255,255,255,0.92)", borderRadius: wonkyCardRadius, border: `2.5px solid ${wonkyColors.black}` }}>
+                  <div className="w-full" style={{ aspectRatio: "1/1" }}>
+                    <img src={post.imageUrl} alt={post.caption} className="w-full h-full object-cover" loading="lazy" />
+                  </div>
+                  <div className="px-5 py-3">
+                    <p className="text-sm font-medium leading-relaxed" style={{ color: wonkyColors.black }}>{post.caption}</p>
+                    <p className="text-[10px] font-bold mt-2 uppercase tracking-wide" style={{ color: "#9a7a72" }}>{post.time}</p>
+                  </div>
+                </div>
+              ) : (
+                <div key={post.id} className="px-5 py-5"
+                  style={{ backgroundColor: wonkyColors.pink, borderRadius: wonkyCardRadius, border: `2.5px solid ${wonkyColors.black}` }}>
+                  <div className="px-4 py-3" style={{ backgroundColor: wonkyColors.white, borderRadius: "18px" }}>
+                    <p className="text-[15px] font-medium leading-relaxed" style={{ color: wonkyColors.black }}>{post.caption}</p>
+                  </div>
+                  <p className="text-[10px] font-bold mt-3 uppercase tracking-wide" style={{ color: "rgba(255,255,255,0.7)" }}>{post.time}</p>
+                </div>
+              )
+            )}
+          </div>
+        </div>
       </div>
+
+      <BottomNav />
     </div>
   );
 }
 
+function BackIcon() {
+  return (<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /></svg>);
+}
+function ShareIcon() {
+  return (<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" /><polyline points="16 6 12 2 8 6" /><line x1="12" y1="2" x2="12" y2="15" /></svg>);
+}
+function MenuIcon() {
+  return (<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2" /><circle cx="12" cy="12" r="2" /><circle cx="19" cy="12" r="2" /></svg>);
+}
+function EditSmallIcon() {
+  return (<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" /><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" /></svg>);
+}
